@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();  
 
+const methodOverride = require("method-override");
+
 const mongoose = require("mongoose");
 const Listing = require("./models/listing");
 
@@ -25,15 +27,46 @@ app.use(express.static(path.join(__dirname,"public")));
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 
+app.use(methodOverride("_method"));
+
 app.listen(port, ()=> {
     console.log(`app is listening for the port ${port}`)
 });
 
+// ROOT PAGE
+
 app.get("/",(req,res) => {
   res.redirect("listing")
 });
+
+// SHOW ALL LISTING 
+
 app.get("/listing", async (req,res)=> {
     const listings = await Listing.find();
-    // console.log(listing);
     res.render("index", {listings});
 });
+
+// SHOW LISTING DETAILS
+
+app.get("/:id", async (req,res)=> {
+    const {id} = req.params;
+    const listing = await Listing.findById(id);
+    res.render("show", {listing});
+});
+
+// LISTING DETAILS EDIT 
+
+app.get("/listing/edit/:id", async (req,res) => {
+    const {id} = req.params;
+    const listing = await Listing.findById(id);
+    res.render("edit", {listing});
+});
+
+app.put("/listing/:id", async (req,res) => {
+    const {id} = req.params;
+    // console.log(req.body);
+    const listing = await Listing.findByIdAndUpdate(id,req.body);
+    res.send("done");
+    // res.redirect(`${id}`);
+});
+
