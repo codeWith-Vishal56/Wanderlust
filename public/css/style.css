@@ -1,0 +1,23 @@
+body{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.container{
+    flex: 1;
+    
+}
+footer{
+    background-color: #ebebeb;
+    
+}
+.f-info{
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+.f-info-socials{
+    font-size: 1.5rem; 
+}

@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();  
 
 const methodOverride = require("method-override");
+const ejsMate  = require('ejs-mate');
+
 
 const mongoose = require("mongoose");
 const Listing = require("./models/listing");
@@ -27,7 +29,9 @@ app.use(express.static(path.join(__dirname,"public")));
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 
+
 app.use(methodOverride("_method"));
+app.engine('ejs', ejsMate );
 
 app.listen(port, ()=> {
     console.log(`app is listening for the port ${port}`)
@@ -46,13 +50,27 @@ app.get("/listing", async (req,res)=> {
     res.render("index", {listings});
 });
 
+
+// ADD NEW LISTING
+
+app.get("/listing/new", (req,res) => {
+    res.render("new");
+});
+
+app.post("/listing", async (req,res) => {
+    await Listing.insertOne(req.body.listing);
+    res.redirect("/listing");
+})
+
+
 // SHOW LISTING DETAILS
 
-app.get("/:id", async (req,res)=> {
+app.get("/listing/:id", async (req,res)=> {
     const {id} = req.params;
     const listing = await Listing.findById(id);
     res.render("show", {listing});
 });
+
 
 // LISTING DETAILS EDIT 
 
@@ -64,9 +82,15 @@ app.get("/listing/edit/:id", async (req,res) => {
 
 app.put("/listing/:id", async (req,res) => {
     const {id} = req.params;
-    // console.log(req.body);
-    const listing = await Listing.findByIdAndUpdate(id,req.body);
-    res.send("done");
-    // res.redirect(`${id}`);
+    // console.log(req.body.listing);
+    const listing = await Listing.findByIdAndUpdate(id,req.body.listing);
+    res.redirect(`${id}`);
 });
 
+// LISTING DELETE
+
+app.delete("/listing/:id", async (req,res) => {
+    const {id} = req.params;
+    const result = await Listing.findByIdAndDelete(id);
+    res.redirect("/listing");
+});

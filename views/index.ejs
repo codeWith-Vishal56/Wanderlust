@@ -1,14 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listings</title>
-</head>
+<% layout("/layout/boilerplate") %>
 <body>
     <h2>Your Listings</h2>
     <% for(let listing of listings) {%>
-        <h4> <a href="/<%= listing._id %>"><%= listing.title %>  </a></h4>
+        <h4> <a href="/listing/<%= listing._id %>"><%= listing.title %>  </a></h4>
     <% } %>
 </body>
-</html>
