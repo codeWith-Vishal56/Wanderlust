@@ -17,16 +17,21 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
-
     <%- include("../includes/navbar.ejs") %>
 
-    <h2>Wanderlust - The Hostel Booking Platform</h2>
-
-    
-    <div class="container"><%- body -%></div>
+    <div class="container">
+      <h2>Wanderlust - The Hostel Booking Platform</h2>
+      <%- body -%>
+    </div>
 
     <%- include("../includes/footer.ejs") %>
 
