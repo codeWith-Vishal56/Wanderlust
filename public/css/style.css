@@ -57,3 +57,21 @@ footer{
     text-decoration: none;
     
 }
+.form-btn{
+    background-color: #fa424d;
+    border:none;
+}
+
+.form-btn:hover{
+    background-color: #f63542;
+
+}
+.form-btn:active{
+    background-color: #2b20c6;
+
+}
+
+.show-card-img{
+    height: 30vh;
+    width: 40vw;
+}
