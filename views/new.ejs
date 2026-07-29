@@ -2,8 +2,8 @@
 <body>
   <div class="row mt-5">
     <div class="col col-8 offset-2">
-        <h2>Add New Listing</h2>
-      <form action="/listing" method="POST">
+      <h2>Add New Listing</h2>
+      <form action="/listing" method="POST" class="needs-validation" novalidate>
         <div class="mb-3">
           <label class="form-label" for="title">Title</label>
           <input
@@ -14,7 +14,10 @@
             placeholder="Enter listing title"
             required
           />
+          <div class="valid-feedback">Looks Good!</div>
+          <div class="invalid-feedback">Please enter a Title.</div>
         </div>
+
         <div class="mb-3">
           <label class="form-label" for="description">Description</label>
           <textarea
@@ -24,6 +27,8 @@
             placeholder="Describe your property"
             required
           ></textarea>
+          <div class="valid-feedback">Looks Good!</div>
+          <div class="invalid-feedback">Please enter Listing Description</div>
         </div>
 
         <div class="mb-3">
@@ -35,6 +40,8 @@
             name="listing[image][url]"
             placeholder="https://example.com/image.jpg"
           />
+          <div class="valid-feedback">Looks Good!</div>
+          <div class="invalid-feedback">Please enter a valid image url</div>
         </div>
 
         <div class="row">
@@ -48,6 +55,8 @@
               placeholder="2500"
               required
             />
+            <div class="valid-feedback">Looks Good!</div>
+            <div class="invalid-feedback">Please enter a valid price</div>
           </div>
 
           <div class="mb-3 col-md-8">
@@ -60,6 +69,8 @@
               placeholder="e.g. Manali"
               required
             />
+            <div class="valid-feedback">Looks Good!</div>
+            <div class="invalid-feedback">Please enter listing location</div>
           </div>
         </div>
 
@@ -68,11 +79,13 @@
           <input
             class="form-control"
             type="text"
-            id="country"
+            id="country"  
             name="listing[country]"
             placeholder="e.g. India"
             required
           />
+          <div class="valid-feedback">Looks Good!</div>
+          <div class="invalid-feedback">Please enter Listing Country.</div>
         </div>
 
         <div class="mb-3">
