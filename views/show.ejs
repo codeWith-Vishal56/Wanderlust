@@ -1,32 +1,57 @@
 <% layout("/layout/boilerplate") %>
+
 <body>
   <div class="row mt-5">
-    <div class="col offset-3">
+    <div class="col offset-lg-3 offset-md-2 offset-sm-1">
       <h2>Listing Details</h2>
 
-      <div class="card col-md-6">
-        <img
-          src="<%= listing.image.url %>"
-          class="card-img-top show-card-img"
-          alt="listing image"
-        />
-        <div class="card-body">
-          <h5 class="card-title"><%= listing.title %></h5>
-          <p class="card-text">
-            <%= listing.description %> <br />
-            Price : &#8377;<%= listing.price.toLocaleString("en-IN") %> <br />
-            <%= listing.location %> <br />
-            <%= listing.country %>
-          </p>
+      <div class="card">
+        <div class="row">
+          <div class="col-md-8">
+            <img
+              src="<%= listing.image.url %>"
+              class="card-img-top show-card-img"
+              alt="listing image"
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-7">
+            <div class="card-body">
+              <h5 class="card-title"><%= listing.title %></h5>
+              <p class="card-text">
+                <%= listing.description %> <br />
+                Price : &#8377;<%= listing.price.toLocaleString("en-IN") %>
+                <br />
+                <%= listing.location %> <br />
+                <%= listing.country %>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="row">
-        <a href="/listing/edit/<%= listing._id %>" class="col-2 btn form-btn" >Edit </a>
-        <form class="col-2" action="/listing/<%= listing._id %>?_method=DELETE" method="POST">
-          <button type="submit" class="btn btn-dark">Delete</button>
-        </form>
+      <div class="row mb-3">
+        <div class="col-auto">
+          <a
+            href="/listing/edit/<%= listing._id %>"
+            class="btn form-btn"
+            >Edit
+          </a>
+        </div>
+        <div class="col-auto">
+          <form
+            class=""
+            action="/listing/<%= listing._id %>?_method=DELETE"
+            method="POST"
+          >
+            <button type="submit" class="btn btn-dark">Delete</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
+
 </body>
+

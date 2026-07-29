@@ -12,6 +12,7 @@ body{
 
 .navbar-brand i{
     color: #fa424d;
+    font-size: 1.8rem;
 }
 
 /* footer */
@@ -59,11 +60,13 @@ footer{
 }
 .form-btn{
     background-color: #fa424d;
+    color: white;
     border:none;
 }
 
 .form-btn:hover{
-    background-color: #f63542;
+    background-color: #e80414b3;
+    color: #ebebeb;
 
 }
 .form-btn:active{
@@ -73,5 +76,5 @@ footer{
 
 .show-card-img{
     height: 30vh;
-    width: 40vw;
+    object-fit: cover;
 }
