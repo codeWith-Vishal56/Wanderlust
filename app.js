@@ -8,6 +8,8 @@ const ejsMate  = require('ejs-mate');
 const mongoose = require("mongoose");
 const Listing = require("./models/listing");
 
+const ExpressError = require("./utils/ExpressError");
+
 main()
     .then(() => {
         console.log("Connected to DB");
@@ -21,7 +23,8 @@ async function main() {
 }
 
 const port = 8080;
-const path = require("path")
+const path = require("path");
+const { error } = require("console");
 
 app.set("view engine","ejs")
 app.set("views", path.join(__dirname, "views"));
@@ -43,6 +46,9 @@ app.get("/",(req,res) => {
   res.redirect("listing")
 });
 
+// Express 5 automatically handles async errors.
+// No need to wrap async routes with wrapAsync.
+
 // SHOW ALL LISTING 
 
 app.get("/listing", async (req,res)=> {
@@ -57,11 +63,15 @@ app.get("/listing/new", (req,res) => {
     res.render("new");
 });
 
-app.post("/listing", async (req,res) => {
-    await Listing.insertOne(req.body.listing);
-    res.redirect("/listing");
-})
+app.post("/listing", async (req,res,next) => {
+        if(!req.body.listing){
+            throw new ExpressError(400,"Send valid data for listing");
+        }
 
+        await Listing.insertOne(req.body.listing);
+        res.redirect("/listing");
+    
+})
 
 // SHOW LISTING DETAILS
 
@@ -94,3 +104,15 @@ app.delete("/listing/:id", async (req,res) => {
     const result = await Listing.findByIdAndDelete(id);
     res.redirect("/listing");
 });
+
+
+app.use((req,res) => {
+    throw new ExpressError(500,"Page Not Found");
+})
+
+
+app.use((err,req,res,next) => {
+    const {statusCode = 500 , message = "something is wrong"} = err;
+    // res.status(statusCode).send(message);
+    res.status(statusCode).render("error" , {err});
+})
