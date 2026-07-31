@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 const Listing = require("./models/listing");
 
 const ExpressError = require("./utils/ExpressError");
+const schemaValidation = require("./schemaValidate");
 
 main()
     .then(() => {
@@ -56,6 +57,15 @@ app.get("/listing", async (req,res)=> {
     res.render("index", {listings});
 });
 
+const validateListing = (req,res,next) => {
+    const {error}= schemaValidation.validate(req.body.listing);
+    if(error){
+    throw new ExpressError(404,error.details[0].message);
+    }else{
+        next();
+    }
+    
+}
 
 // ADD NEW LISTING
 
@@ -63,11 +73,7 @@ app.get("/listing/new", (req,res) => {
     res.render("new");
 });
 
-app.post("/listing", async (req,res,next) => {
-        if(!req.body.listing){
-            throw new ExpressError(400,"Send valid data for listing");
-        }
-
+app.post("/listing",validateListing, async (req,res,next) => {
         await Listing.insertOne(req.body.listing);
         res.redirect("/listing");
     
@@ -86,15 +92,15 @@ app.get("/listing/:id", async (req,res)=> {
 
 app.get("/listing/edit/:id", async (req,res) => {
     const {id} = req.params;
-    const listing = await Listing.findById(id);
+    const listing       = await Listing.findById(id);
     res.render("edit", {listing});
 });
 
-app.put("/listing/:id", async (req,res) => {
+app.put("/listing/:id", validateListing ,async (req,res) => {
     const {id} = req.params;
     console.log(req.body);
     const listing = await Listing.findByIdAndUpdate(id,req.body.listing);
-    res.redirect(`${id}`);
+    res.redirect(`/listing/${id}`);
 });
 
 // LISTING DELETE
