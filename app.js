@@ -7,6 +7,7 @@ const ejsMate  = require('ejs-mate');
 
 const mongoose = require("mongoose");
 const Listing = require("./models/listing");
+const Review = require("./models/review");
 
 const ExpressError = require("./utils/ExpressError");
 const schemaValidation = require("./schemaValidate");
@@ -83,9 +84,35 @@ app.post("/listing",validateListing, async (req,res,next) => {
 
 app.get("/listing/:id", async (req,res)=> {
     const {id} = req.params;
-    const listing = await Listing.findById(id);
+    const listing = await Listing.findById(id).populate("review");
     res.render("show", {listing});
 });
+
+
+// Add Listing Review
+
+app.post("/listing/:id/review",async (req,res)=> {
+    const {id} = req.params;
+    const listing = await Listing.findById(id);
+    const review = await Review.insertOne(req.body.review);
+
+    listing.review.push(review);
+
+    const result = await listing.save();
+    console.log("save" ,result);
+    res.redirect(`/listing/${id}`);
+    
+});
+
+// Delete Review
+
+app.delete("/listing/:id/review/:reviewId", async (req,res) => {
+    const {id,reviewId} = req.params;
+    const review = await Review.findByIdAndDelete(reviewId);
+    const listing = await Listing.findByIdAndUpdate(id,{$pull:{review:reviewId}});
+    
+    res.redirect(`/listing/${id}`)
+})
 
 
 // LISTING DETAILS EDIT 
