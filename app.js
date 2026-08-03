@@ -10,7 +10,7 @@ const Listing = require("./models/listing");
 const Review = require("./models/review");
 
 const ExpressError = require("./utils/ExpressError");
-const schemaValidation = require("./schemaValidate");
+const {listingSchema,reviewSchema} = require("./schemaValidate");
 
 main()
     .then(() => {
@@ -59,13 +59,22 @@ app.get("/listing", async (req,res)=> {
 });
 
 const validateListing = (req,res,next) => {
-    const {error}= schemaValidation.validate(req.body.listing);
+    const {error}= listingSchema.validate(req.body.listing);
     if(error){
     throw new ExpressError(404,error.details[0].message);
     }else{
         next();
     }
     
+}
+
+const validateReview = (req,res,next) => {
+    const {error} = reviewSchema.validate(req.body.review);
+    if(error){
+    throw new ExpressError(404,error.details[0].message);
+    }else{
+        next();
+    }
 }
 
 // ADD NEW LISTING
@@ -84,19 +93,19 @@ app.post("/listing",validateListing, async (req,res,next) => {
 
 app.get("/listing/:id", async (req,res)=> {
     const {id} = req.params;
-    const listing = await Listing.findById(id).populate("review");
+    const listing = await Listing.findById(id).populate("reviews");
     res.render("show", {listing});
 });
 
 
 // Add Listing Review
 
-app.post("/listing/:id/review",async (req,res)=> {
+app.post("/listing/:id/review",validateReview , async (req,res)=> {
     const {id} = req.params;
     const listing = await Listing.findById(id);
     const review = await Review.insertOne(req.body.review);
 
-    listing.review.push(review);
+    listing.reviews.push(review);
 
     const result = await listing.save();
     console.log("save" ,result);
@@ -109,7 +118,7 @@ app.post("/listing/:id/review",async (req,res)=> {
 app.delete("/listing/:id/review/:reviewId", async (req,res) => {
     const {id,reviewId} = req.params;
     const review = await Review.findByIdAndDelete(reviewId);
-    const listing = await Listing.findByIdAndUpdate(id,{$pull:{review:reviewId}});
+    const listing = await Listing.findByIdAndUpdate(id,{$pull:{reviews:reviewId}});
     
     res.redirect(`/listing/${id}`)
 })
