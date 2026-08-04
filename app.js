@@ -12,6 +12,9 @@ const Review = require("./models/review");
 const ExpressError = require("./utils/ExpressError");
 const {listingSchema,reviewSchema} = require("./schemaValidate");
 
+const listing = require("./routes/listing");
+const review = require("./routes/review");
+
 main()
     .then(() => {
         console.log("Connected to DB");
@@ -48,105 +51,8 @@ app.get("/",(req,res) => {
   res.redirect("listing")
 });
 
-// Express 5 automatically handles async errors.
-// No need to wrap async routes with wrapAsync.
-
-// SHOW ALL LISTING 
-
-app.get("/listing", async (req,res)=> {
-    const listings = await Listing.find();
-    res.render("index", {listings});
-});
-
-const validateListing = (req,res,next) => {
-    const {error}= listingSchema.validate(req.body.listing);
-    if(error){
-    throw new ExpressError(404,error.details[0].message);
-    }else{
-        next();
-    }
-    
-}
-
-const validateReview = (req,res,next) => {
-    const {error} = reviewSchema.validate(req.body.review);
-    if(error){
-    throw new ExpressError(404,error.details[0].message);
-    }else{
-        next();
-    }
-}
-
-// ADD NEW LISTING
-
-app.get("/listing/new", (req,res) => {
-    res.render("new");
-});
-
-app.post("/listing",validateListing, async (req,res,next) => {
-        await Listing.insertOne(req.body.listing);
-        res.redirect("/listing");
-    
-})
-
-// SHOW LISTING DETAILS
-
-app.get("/listing/:id", async (req,res)=> {
-    const {id} = req.params;
-    const listing = await Listing.findById(id).populate("reviews");
-    res.render("show", {listing});
-});
-
-
-// Add Listing Review
-
-app.post("/listing/:id/review",validateReview , async (req,res)=> {
-    const {id} = req.params;
-    const listing = await Listing.findById(id);
-    const review = await Review.insertOne(req.body.review);
-
-    listing.reviews.push(review);
-
-    const result = await listing.save();
-    console.log("save" ,result);
-    res.redirect(`/listing/${id}`);
-    
-});
-
-// Delete Review
-
-app.delete("/listing/:id/review/:reviewId", async (req,res) => {
-    const {id,reviewId} = req.params;
-    const review = await Review.findByIdAndDelete(reviewId);
-    const listing = await Listing.findByIdAndUpdate(id,{$pull:{reviews:reviewId}});
-    
-    res.redirect(`/listing/${id}`)
-})
-
-
-// LISTING DETAILS EDIT 
-
-app.get("/listing/edit/:id", async (req,res) => {
-    const {id} = req.params;
-    const listing       = await Listing.findById(id);
-    res.render("edit", {listing});
-});
-
-app.put("/listing/:id", validateListing ,async (req,res) => {
-    const {id} = req.params;
-    console.log(req.body);
-    const listing = await Listing.findByIdAndUpdate(id,req.body.listing);
-    res.redirect(`/listing/${id}`);
-});
-
-// LISTING DELETE
-
-app.delete("/listing/:id", async (req,res) => {
-    const {id} = req.params;
-    const result = await Listing.findByIdAndDelete(id);
-    res.redirect("/listing");
-});
-
+app.use("/listing",listing);
+app.use("/listing/:id/review",review);
 
 app.use((req,res) => {
     throw new ExpressError(500,"Page Not Found");
