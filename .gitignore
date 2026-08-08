@@ -1,0 +1,4 @@
+node_modules/
+Cookies/
+.env
+.DS_Store
