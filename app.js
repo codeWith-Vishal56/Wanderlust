@@ -15,6 +15,8 @@ const {listingSchema,reviewSchema} = require("./schemaValidate");
 const listing = require("./routes/listing");
 const review = require("./routes/review");
 
+const session = require('express-session');
+
 main()
     .then(() => {
         console.log("Connected to DB");
@@ -37,9 +39,22 @@ app.use(express.static(path.join(__dirname,"public")));
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 
-
 app.use(methodOverride("_method"));
 app.engine('ejs', ejsMate );
+
+const sessionOption ={
+    secret:"theSessionSecretCode",
+    resave: false,
+    saveUninitialized: true,
+    cookie:{
+        expires:Date.now() + 7 * 24 * 60 * 60 *1000,
+        maxAge:7 * 24 * 60 * 60 *1000,
+        httpOnly:true
+    }
+
+}
+
+app.use(session(sessionOption));
 
 app.listen(port, ()=> {
     console.log(`app is listening for the port ${port}`)
@@ -53,6 +68,7 @@ app.get("/",(req,res) => {
 
 app.use("/listing",listing);
 app.use("/listing/:id/review",review);
+
 
 app.use((req,res) => {
     throw new ExpressError(500,"Page Not Found");
