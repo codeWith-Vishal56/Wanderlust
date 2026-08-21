@@ -16,6 +16,7 @@ const listing = require("./routes/listing");
 const review = require("./routes/review");
 
 const session = require('express-session');
+const flash = require('connect-flash');
 
 main()
     .then(() => {
@@ -55,9 +56,19 @@ const sessionOption ={
 }
 
 app.use(session(sessionOption));
+app.use(flash());
+
 
 app.listen(port, ()=> {
     console.log(`app is listening for the port ${port}`)
+});
+
+app.use((req,res,next) => {
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    console.log(res.locals);
+    // console.log();
+    next();
 });
 
 // ROOT PAGE
