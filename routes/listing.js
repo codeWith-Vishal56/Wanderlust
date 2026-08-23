@@ -12,7 +12,7 @@ const {listingSchema} = require("../schemaValidate");
 
 router.get("/", async (req,res)=> {
     const listings = await Listing.find();
-    res.render("index", {listings});
+    res.render("listings/index", {listings});
 });
 
 const validateListing = (req,res,next) => {
@@ -29,7 +29,7 @@ const validateListing = (req,res,next) => {
 // ADD NEW LISTING
 
 router.get("/new", (req,res) => {
-    res.render("new");
+    res.render("listings/new");
 });
 
 router.post("/",validateListing, async (req,res,next) => {
@@ -50,7 +50,7 @@ router.get("/:id", async (req,res)=> {
         req.flash("error", "listing path does not exist")
         return res.redirect("/listing");
     }
-    res.render("show", {listing});
+    res.render("listings/show", {listing});
 });
 
 
@@ -64,7 +64,7 @@ router.get("/edit/:id", async (req,res) => {
         req.flash("error", "listing path does not exist")
         return res.redirect("/listing");
     }
-    res.render("edit", {listing});
+    res.render("listings/edit", {listing});
 });
 
 router.put("/:id", validateListing ,async (req,res) => {

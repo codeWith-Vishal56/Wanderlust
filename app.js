@@ -12,11 +12,16 @@ const Review = require("./models/review");
 const ExpressError = require("./utils/ExpressError");
 const {listingSchema,reviewSchema} = require("./schemaValidate");
 
-const listing = require("./routes/listing");
-const review = require("./routes/review");
+const listingRouter = require("./routes/listing");
+const reviewRouter = require("./routes/review");
+const userRouter = require("./routes/user");
 
 const session = require('express-session');
 const flash = require('connect-flash');
+
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user");
 
 main()
     .then(() => {
@@ -58,6 +63,13 @@ const sessionOption ={
 app.use(session(sessionOption));
 app.use(flash());
 
+// using passport
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 
 app.listen(port, ()=> {
     console.log(`app is listening for the port ${port}`)
@@ -77,8 +89,10 @@ app.get("/",(req,res) => {
   res.redirect("listing")
 });
 
-app.use("/listing",listing);
-app.use("/listing/:id/review",review);
+app.use("/listing",listingRouter);
+app.use("/listing/:id/review",reviewRouter);
+app.use("/",userRouter);
+
 
 
 app.use((req,res) => {
