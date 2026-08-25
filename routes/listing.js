@@ -4,6 +4,7 @@ const Listing = require("../models/listing");
 
 const ExpressError = require("../utils/ExpressError");
 const {listingSchema} = require("../schemaValidate");
+const {isloggedin} = require("../middleware");
 
 // Express 5 automatically handles async errors.
 // No need to wrap async routes with wrapAsync.
@@ -28,12 +29,13 @@ const validateListing = (req,res,next) => {
 
 // ADD NEW LISTING
 
-router.get("/new", (req,res) => {
+router.get("/new",isloggedin, (req,res) => {
+    console.log(req.user);
     res.render("listings/new");
+    
 });
 
-router.post("/",validateListing, async (req,res,next) => {
-        console.log("inside listing route");
+router.post("/",isloggedin,validateListing, async (req,res,next) => {
         await Listing.insertOne(req.body.listing);
         req.flash("success", "listing created");
         res.redirect("/listing");
@@ -57,7 +59,7 @@ router.get("/:id", async (req,res)=> {
 
 // LISTING DETAILS EDIT 
 
-router.get("/edit/:id", async (req,res) => {
+router.get("/edit/:id", isloggedin,async (req,res) => {
     const {id} = req.params;
     const listing       = await Listing.findById(id);
     if(!listing){
@@ -67,8 +69,7 @@ router.get("/edit/:id", async (req,res) => {
     res.render("listings/edit", {listing});
 });
 
-router.put("/:id", validateListing ,async (req,res) => {
-    console.log("inside put req");
+router.put("/:id",isloggedin, validateListing ,async (req,res) => {
     const {id} = req.params;
     console.log(req.body);
     const listing = await Listing.findByIdAndUpdate(id,req.body.listing);
@@ -78,7 +79,7 @@ router.put("/:id", validateListing ,async (req,res) => {
 
 // LISTING DELETE
 
-router.delete("/:id", async (req,res) => {
+router.delete("/:id", isloggedin,async (req,res) => {
     const {id} = req.params;
     const result = await Listing.findByIdAndDelete(id);
     req.flash("success", "listing deleted");
