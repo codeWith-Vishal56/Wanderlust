@@ -6,11 +6,9 @@ const ejsMate  = require('ejs-mate');
 
 
 const mongoose = require("mongoose");
-const Listing = require("./models/listing");
-const Review = require("./models/review");
 
 const ExpressError = require("./utils/ExpressError");
-const {listingSchema,reviewSchema} = require("./schemaValidate");
+
 
 const listingRouter = require("./routes/listing");
 const reviewRouter = require("./routes/review");

@@ -34,6 +34,9 @@
         </div>
       </div>
 
+      
+      <%# if( currUser && listing.owner._id.equals(currUser._id)) {%>
+        
       <div class="row mb-3">
         <div class="col-auto">
           <a href="/listing/edit/<%= listing._id %>" class="btn form-btn"
@@ -50,6 +53,9 @@
           </form>
         </div>
       </div>
+
+       <%# } %>
+
     </div>
   </div>
   <div class="row offset-lg-3 offset-md-2 offset-sm-1 mb-3">
