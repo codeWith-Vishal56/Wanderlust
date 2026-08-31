@@ -35,7 +35,11 @@ router.post("/",isloggedin,validateListing, async (req,res,next) => {
 
 router.get("/:id", async (req,res)=> {
     const {id} = req.params;
-    const listing = await Listing.findById(id).populate("reviews").populate("owner");
+    const listing = await Listing.findById(id).populate({
+        path:"reviews",populate:{
+            path:"author"
+        }
+    }).populate("owner");
     if(!listing){
         req.flash("error", "listing path does not exist")
         return res.redirect("/listing");
