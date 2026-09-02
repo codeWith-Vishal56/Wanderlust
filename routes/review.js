@@ -1,33 +1,14 @@
 const express = require("express");
 const router = express.Router({mergeParams:true});
-const Listing = require("../models/listing");
-const Review = require("../models/review");
 const {isloggedin,validateReview, isAuthor} = require("../middleware");
+const reviewController = require("../controllers/review");
 
 // Add Listing Review
 
-router.post("/",isloggedin,validateReview , async (req,res)=> {
-    const {id} = req.params;
-    const listing = await Listing.findById(id);
-    req.body.review.author = req.user._id; 
-    const review = await Review.insertOne(req.body.review);
-
-    listing.reviews.push(review);
-
-    const result = await listing.save();
-    console.log("save" ,result);
-    res.redirect(`/listing/${id}`);
-    
-});
+router.post("/",isloggedin,validateReview , reviewController.addReview);
 
 // Delete Review
 
-router.delete("/:reviewId", isloggedin,isAuthor,async (req,res) => {
-    const {id,reviewId} = req.params;
-    const review = await Review.findByIdAndDelete(reviewId);
-    const listing = await Listing.findByIdAndUpdate(id,{$pull:{reviews:reviewId}});
-    
-    res.redirect(`/listing/${id}`)
-})
+router.delete("/:reviewId", isloggedin,isAuthor,reviewController.destroyReview)
 
 module.exports = router;
