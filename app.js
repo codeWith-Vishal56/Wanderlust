@@ -21,6 +21,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user");
 
+
 main()
     .then(() => {
         console.log("Connected to DB");
