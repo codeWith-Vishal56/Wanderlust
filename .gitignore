@@ -3,3 +3,5 @@ package-lock.json
 Cookies/
 .env
 .DS_Store
+.pre
+.prettierrc
