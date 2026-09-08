@@ -4,7 +4,8 @@ const { isloggedin, isOwner, validateListing } = require("../middleware");
 const listingController = require("../controllers/listing");
 
 const multer  = require('multer');
-const upload = multer({ dest: 'uploads/' });
+const {storage} = require("../cloudConfig");
+const upload = multer({ storage });
 
 // Express 5 automatically handles async errors.
 // No need to wrap async routes with wrapAsync.
