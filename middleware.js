@@ -6,7 +6,6 @@ const {reviewSchema} = require("./schemaValidate");
 
 module.exports.isloggedin = (req,res,next) => {
     req.session.redirectUrl = req.originalUrl;
-    console.log(req.session.redirectUrl);   
     if(!req.isAuthenticated()){
         req.flash("error", "Please log in");
         return res.redirect("/login");

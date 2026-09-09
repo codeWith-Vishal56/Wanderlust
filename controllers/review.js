@@ -10,7 +10,6 @@ module.exports.addReview = async (req,res)=> {
     listing.reviews.push(review);
 
     const result = await listing.save();
-    console.log("save" ,result);
     res.redirect(`/listing/${id}`);
     
 };

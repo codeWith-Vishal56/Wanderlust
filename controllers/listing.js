@@ -11,11 +11,14 @@ module.exports.renderNewListingForm = (req,res) => {
 }
 
 module.exports.newListing = async (req,res,next) => {
+    console.log("insdie new listing");
+        const url = req.file.path;
+        const filename = req.file.filename;
         req.body.listing.owner = req.user._id;
+        req.body.listing.image = {filename ,url};
         await Listing.insertOne(req.body.listing);
         req.flash("success", "listing created");
         res.redirect("/listing");
-        
     
 }
 

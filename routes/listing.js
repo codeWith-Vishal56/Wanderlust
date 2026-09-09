@@ -3,8 +3,8 @@ const router = express.Router();
 const { isloggedin, isOwner, validateListing } = require("../middleware");
 const listingController = require("../controllers/listing");
 
-const multer  = require('multer');
-const {storage} = require("../cloudConfig");
+const multer = require("multer");
+const { storage } = require("../cloudConfig");
 const upload = multer({ storage });
 
 // Express 5 automatically handles async errors.
@@ -15,10 +15,12 @@ const upload = multer({ storage });
 router
   .route("/")
   .get(listingController.index)
-  // .post(isloggedin, validateListing, listingController.newListing);
-  .post(upload.single('listing[image][url]'),(req,res) => {
-    res.send(req.file);
-  });
+  .post(
+    isloggedin,
+    upload.single("listing[image][url]"),
+    validateListing,
+    listingController.newListing,
+  );
 
 // ADD NEW LISTING
 
