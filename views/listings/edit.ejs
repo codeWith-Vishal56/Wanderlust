@@ -8,6 +8,7 @@
         method="POST"
         class="needs-validation"
         novalidate
+        enctype="multipart/form-data"
       >
         <h2>Edit Your Listing</h2>
 
@@ -41,12 +42,11 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label" for="url"> url :</label>
+          <label class="form-label" for="url"> Upload new Image</label>
           <input
             class="form-control"
-            type="text"
+            type="file"
             name="listing[image][url]"
-            value="<%= listing.image.url %>"
             id="url"
           />
           <div class="valid-feedback">Looks Good!</div>
