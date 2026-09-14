@@ -1,4 +1,5 @@
 const Listing = require("../models/listing");
+const ExpressError = require("../utils/ExpressError");
 
 module.exports.index = async (req, res) => {
   const listings = await Listing.find();
@@ -10,11 +11,47 @@ module.exports.renderNewListingForm = (req, res) => {
 };
 
 module.exports.newListing = async (req, res, next) => {
+
+  // listing create
   const url = req.file.path;
   const filename = req.file.filename;
+
   req.body.listing.owner = req.user._id;
   req.body.listing.image = { filename, url };
-  await Listing.insertOne(req.body.listing);
+
+  // Create listing document
+  const newListing = new Listing(req.body.listing);
+
+  // Geocoding
+  const geocodingUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+    `${newListing.location}, ${newListing.country}`
+  )}&format=json&limit=1`;
+
+  const response = await fetch(geocodingUrl, {
+    headers: {
+      "User-Agent": "Wanderlust Learning Project"
+    }
+  });
+
+  const data = await response.json();
+
+  if (data.length === 0) {
+    throw new ExpressError(404,"Location not found");
+    // return res.send("Location not found");
+  }
+
+  const latitude = Number(data[0].lat);
+  const longitude = Number(data[0].lon);
+
+  // Save geometry
+  newListing.geometry = {
+    type: "Point",
+    coordinates: [longitude, latitude]
+  };
+
+  // Save listing to MongoDB
+  await newListing.save();
+
   req.flash("success", "listing created");
   res.redirect("/listing");
 };
@@ -39,12 +76,12 @@ module.exports.showListing = async (req, res) => {
 module.exports.renderEditListingForm = async (req, res) => {
   const { id } = req.params;
   const listing = await Listing.findById(id);
-  const imageUrl = listing.image.url.replace("/upload", "/upload/w_250") 
+  const imageUrl = listing.image.url.replace("/upload", "/upload/w_250");
   if (!listing) {
     req.flash("error", "listing path does not exist");
     return res.redirect("/listing");
   }
-  res.render("listings/edit", { listing , imageUrl});
+  res.render("listings/edit", { listing, imageUrl });
 };
 
 module.exports.editListing = async (req, res) => {
