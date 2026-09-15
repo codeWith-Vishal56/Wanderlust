@@ -2,7 +2,24 @@ const Listing = require("../models/listing");
 const ExpressError = require("../utils/ExpressError");
 
 module.exports.index = async (req, res) => {
-  const listings = await Listing.find();
+  const {search} = req.query;
+  let listings;
+  if(search){
+  listings = await Listing.find({
+            $or: [
+                { location: { $regex: search, $options: "i" } },
+                { country: { $regex: search, $options: "i" } }
+            ]
+        });
+   
+  }else{
+  listings = await Listing.find();
+  }
+
+  if (search && listings.length === 0) {
+    throw new ExpressError(404, `No listing Found for ${search}`);
+  }
+  
   res.render("listings/index", { listings });
 };
 
