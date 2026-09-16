@@ -1,3 +1,5 @@
+require("dotenv").config({ path: "../.env" });
+
 const Listing = require("../models/listing");
 const initData = require("./data");
 const mongoose = require("mongoose");
@@ -12,7 +14,7 @@ main()
     });
 
 async function main() {
-  await mongoose.connect('mongodb://127.0.0.1:27017/wanderlust');
+  await mongoose.connect(process.env.MONGODB_ATLAS_URL);
 }
 
 const initDB = async () => {
@@ -20,7 +22,7 @@ const initDB = async () => {
 
     initData.data = initData.data.map((listing) => ({
         ...listing,
-        owner: "6a8fd7edd8c5a8b665203c04"
+        owner: "6aaaa488e83c3051daf661ec"
     }));
 
     const res = await Listing.insertMany(initData.data);
